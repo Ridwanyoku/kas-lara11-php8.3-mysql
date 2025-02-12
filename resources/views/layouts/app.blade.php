@@ -23,10 +23,25 @@
                     <li class="nav-item"><a class="nav-link" href="{{ route('siswa.index') }}">Siswa</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('kas.index') }}">kas Bulanan</a></li>
                     <li class="nav-item"><a class="nav-link" href="/pengeluaran">Pengeluaran</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li>
+                    <form action="{{ route('logout') }}" method="POST" class="inline">
+                        @csrf
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            Logout
+                        </button>
+                    </form>
+                    
                 </ul>
             </div>
         </div>
     </nav>
+    <footer class="bg-dark text-white text-center p-3">
+        <div class="container">
+            <strong>Total Kas: Rp {{ number_format($totalKas, 0, ',', '.') }}</strong>
+            &nbsp;|&nbsp;
+            <strong>Total Pengeluaran: Rp {{ number_format($totalPengeluaran, 0, ',', '.') }}</strong>
+        </div>
+    </footer>
 
     
     {{-- <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -63,13 +78,6 @@
             @yield('content')
         </div>
     </main>
-    <footer class="fixed-bottom bg-dark text-white text-center p-3">
-        <div class="container">
-            <strong>Total Kas: Rp {{ number_format($totalKas, 0, ',', '.') }}</strong>
-            &nbsp;|&nbsp;
-            <strong>Total Pengeluaran: Rp {{ number_format($totalPengeluaran, 0, ',', '.') }}</strong>
-        </div>
-    </footer>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -77,7 +85,7 @@
         <strong>Total Kas: Rp <span id="totalKas">0</span></strong>
     </footer>
      --}}
-    <script>
+    {{-- <script>
         document.addEventListener("DOMContentLoaded", function() {
             fetch("{{ route('kas.total') }}")
                 .then(response => response.json())
@@ -86,7 +94,7 @@
                 })
                 .catch(error => console.error('Error:', error));
         });
-    </script>
+    </script> --}}
     
 
 </body>

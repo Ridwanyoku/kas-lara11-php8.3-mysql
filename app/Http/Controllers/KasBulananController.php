@@ -9,7 +9,7 @@ class KasBulananController extends Controller
 {
     public function index()
     {
-        $kas = KasBulanan::orderBy('tahun', 'desc')->orderBy('bulan', 'asc')->get();
+        $kas = KasBulanan::orderBy('tahun', 'desc')->orderBy('id', 'asc')->get();
         return view('kas.index', compact('kas'));
     }
 

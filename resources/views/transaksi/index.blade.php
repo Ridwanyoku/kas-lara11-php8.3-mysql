@@ -33,9 +33,9 @@
             </tr>
         </thead>
         <tbody>
-            @php $totalKas = 0; @endphp
+            {{-- @php $totalKas = 0; @endphp --}}
             @foreach($transaksi as $t)
-            @php $totalKas += $t->jumlah; @endphp
+            {{-- @php $totalKas += $t->jumlah; @endphp --}}
             <tr>
                 <td>{{ $t->siswa->nama }}</td>
                 <td>{{ $t->kasBulanan->bulan }}</td>
@@ -136,7 +136,7 @@
 
 <!-- jQuery (pastikan disertakan) -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
+{{-- <script>
 $(document).ready(function(){
     function filterTable() {
         var searchText = $('#searchInput').val().toLowerCase();
@@ -169,6 +169,6 @@ $(document).ready(function(){
     $('#searchInput').on('keyup input', filterTable);
     $('#statusFilter').on('change', filterTable);
 });
-</script>
+</script> --}}
 
 @endsection
