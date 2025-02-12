@@ -11,7 +11,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 
 Route::get('/', function () {
-    return view('welcome'); // Buat view landing sesuai kebutuhan
+    return view('index'); // Buat view landing sesuai kebutuhan
 })->name('landing');
 
 
