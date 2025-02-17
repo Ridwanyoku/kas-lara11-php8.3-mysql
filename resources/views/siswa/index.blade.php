@@ -5,8 +5,16 @@
     <h2>Daftar Siswa</h2>
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambah">Tambah Siswa</button>
 
-    @if (session('success'))
-        <div class="alert alert-success mt-3">{{ session('success') }}</div>
+    @if(session('success'))
+        <div class="alert alert-success" role="alert">
+          {{ session('success') }}
+        </div>
+      @endif
+      
+    @if(session('error'))
+        <div class="alert alert-danger" role="alert">
+          {{ session('error') }}
+        </div>
     @endif
 
     <table class="table table-striped mt-3">

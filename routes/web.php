@@ -24,14 +24,15 @@ Route::middleware(\App\Http\Middleware\AdminAuth::class)->group(function () {
 
     // CRUD untuk pengelolaan admin (bisa diatur di AdminController)
     Route::resource('admin', AdminController::class);
-
     
-
-// Route CRUD Siswa
-    Route::get('/siswa', [SiswaController::class, 'index'])->name('siswa.index');
-    Route::post('/siswa', [SiswaController::class, 'store'])->name('siswa.store');
-    Route::put('/siswa/{id}', [SiswaController::class, 'update'])->name('siswa.update');
-    Route::delete('/siswa/{id}', [SiswaController::class, 'destroy'])->name('siswa.destroy');
+    
+    
+    // Route CRUD Siswa
+    Route::resource('siswa', SiswaController::class);
+    // Route::get('/siswa', [SiswaController::class, 'index'])->name('siswa.index');
+    // Route::post('/siswa', [SiswaController::class, 'store'])->name('siswa.store');
+    // Route::put('/siswa/{id}', [SiswaController::class, 'update'])->name('siswa.update');
+    // Route::delete('/siswa/{id}', [SiswaController::class, 'destroy'])->name('siswa.destroy');
 
     // Route CRUD Kas Bulanan
     Route::get('/kas', [KasBulananController::class, 'index'])->name('kas.index');
@@ -57,12 +58,12 @@ Route::middleware(\App\Http\Middleware\AdminAuth::class)->group(function () {
 
 
 
-Route::get('/kas/total', function () {
-    $totalPemasukan = TransaksiSiswa::sum('jumlah'); // Total pemasukan dari kas siswa
-    $totalPengeluaran = Pengeluaran::sum('jumlah'); // Total pengeluaran
-    $totalKas = $totalPemasukan - $totalPengeluaran; // Hitung total kas yang tersedia
+// Route::get('/kas/total', function () {
+//     $totalPemasukan = TransaksiSiswa::sum('jumlah'); // Total pemasukan dari kas siswa
+//     $totalPengeluaran = Pengeluaran::sum('jumlah'); // Total pengeluaran
+//     $totalKas = $totalPemasukan - $totalPengeluaran; // Hitung total kas yang tersedia
 
-    return response()->json(['total' => $totalKas]);
-})->name('kas.total');
+//     return response()->json(['total' => $totalKas]);
+// })->name('kas.total');
 
 

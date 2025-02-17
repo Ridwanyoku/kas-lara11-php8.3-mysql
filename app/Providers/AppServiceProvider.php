@@ -35,5 +35,6 @@ class AppServiceProvider extends ServiceProvider
         // Share variabel ke semua view
         View::share('totalKas', $totalKas);
         View::share('totalPengeluaran', $totalPengeluaran);
+        View::share('totalPemasukan', $totalPemasukan);
     }
 }

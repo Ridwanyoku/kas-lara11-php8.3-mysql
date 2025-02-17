@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->string('nama');
             $table->string('email')->unique();
-            $table->string('password'); // Pastikan password di-hash
+            $table->string('password');
             $table->timestamps();
         });
     }

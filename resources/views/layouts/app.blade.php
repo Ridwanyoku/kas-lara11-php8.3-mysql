@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
+    <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Pencatatan Kas Kelas</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
 </head>
 <body class="">
-
+    
     <!-- Navbar -->
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
         <div class="container gap-5">
-            <a class="navbar-brand" href="/transaksi">Kas Kelas</a>
+            <a class="navbar-brand" href="#">Dashboard</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -25,7 +26,7 @@
                     <li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li>
                     <form action="{{ route('logout') }}" method="POST" class="inline">
                         @csrf
-                        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        <button type="submit" class="nav-item button btn btn-danger">
                             Logout
                         </button>
                     </form>
@@ -34,14 +35,16 @@
             </div>
         </div>
     </nav>
-    <footer class="bg-dark text-white text-center p-3">
+    <div class="bg-dark text-white text-center p-3">
         <div class="container">
-            <strong>Total Kas: Rp {{ number_format($totalKas, 0, ',', '.') }}</strong>
+            <strong>Total Pemasukan: Rp {{ number_format($totalPemasukan, 0, ',', '.') }}</strong>
+            &nbsp;|&nbsp;
+            <strong>Total Kas Saat Ini: Rp {{ number_format($totalKas, 0, ',', '.') }}</strong>
             &nbsp;|&nbsp;
             <strong>Total Pengeluaran: Rp {{ number_format($totalPengeluaran, 0, ',', '.') }}</strong>
         </div>
-    </footer>
-
+    </div>
+    
     
     {{-- <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="grid grid-cols-1 gap-6 md:grid-cols-4 mb-8">
@@ -73,13 +76,13 @@
     <!-- Konten Utama -->
     <main role="main" class="container">
         
+        
         <div class="container mt-4">
             @yield('content')
         </div>
     </main>
-
+    
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     {{-- <footer class="bottom bg-dark text-white text-center p-3">
         <strong>Total Kas: Rp <span id="totalKas">0</span></strong>
     </footer>

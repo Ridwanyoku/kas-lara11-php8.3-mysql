@@ -29,11 +29,11 @@
                             Edit
                         </button>
 
-                        <form action="{{ route('admin.destroy', $admin->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus admin ini?');">
+                        {{-- <form action="{{ route('admin.destroy', $admin->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus admin ini?');">
                             @csrf
                             @method('DELETE')
                             <button class="btn btn-danger btn-sm">Hapus</button>
-                        </form>
+                        </form> --}}
                     </td>
                 </tr>
 
