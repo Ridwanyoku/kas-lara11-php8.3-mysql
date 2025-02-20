@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link rel="shortcut icon" href="{{ asset('img/logo.jpg') }}" type="image/png">
 </head>
 <body class="">
     
@@ -21,7 +22,7 @@
                 <ul class="navbar-nav gap-5">
                     <li class="nav-item"><a class="nav-link" href="/transaksi">Transaksi</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('siswa.index') }}">Siswa</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('kas.index') }}">kas Bulanan</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('kas.index') }}">Target</a></li>
                     <li class="nav-item"><a class="nav-link" href="/pengeluaran">Pengeluaran</a></li>
                     <li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li>
                     <form action="{{ route('logout') }}" method="POST" class="inline">

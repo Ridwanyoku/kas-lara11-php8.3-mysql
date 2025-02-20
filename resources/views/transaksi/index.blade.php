@@ -19,20 +19,44 @@
     <!-- Tombol Tambah -->
     <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#tambahModal">Tambah Transaksi</button>
 
-    {{-- <!-- Filter Pencarian dan Status -->
-    <div class="row mb-3">
+    <!-- Form Filter Bulan dan Tahun -->
+    <form method="GET" action="{{ route('transaksi.index') }}" class="row g-3 mb-4">
         <div class="col-md-4">
-            <input type="text" id="searchInput" class="form-control" placeholder="Cari nama siswa...">
-        </div>
-        <div class="col-md-4">
-            <select id="statusFilter" class="form-select">
-                <option value="">Semua Status</option>
-                <option value="lunas">Lunas</option>
-                <option value="belum lunas">Belum Lunas</option>
+            <select name="bulan" class="form-select">
+                <option value="">Semua Bulan</option>
+                @php
+                    $months = [
+                        'januari' => 'Januari',
+                        'februari' => 'Februari',
+                        'maret' => 'Maret',
+                        'april' => 'April',
+                        'mei' => 'Mei',
+                        'juni' => 'Juni',
+                        'juli' => 'Juli',
+                        'agustus' => 'Agustus',
+                        'september' => 'September',
+                        'oktober' => 'Oktober',
+                        'november' => 'November',
+                        'desember' => 'Desember',
+                    ];
+                @endphp
+                @foreach($months as $key => $value)
+                    <option value="{{ $key }}" {{ (request('bulan') == $key) ? 'selected' : '' }}>{{ $value }}</option>
+                @endforeach
             </select>
         </div>
-    </div> --}}
-
+        <div class="col-md-4">
+            <select name="tahun" class="form-select">
+                <option value="">Semua Tahun</option>
+                @foreach($years as $year)
+                    <option value="{{ $year }}" {{ $tahun == $year ? 'selected' : '' }}>{{ $year }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary w-100">Tampilkan</button>
+        </div>
+    </form>
 
     <!-- Tabel Transaksi -->
     <table class="table table-striped mb-4">
@@ -40,6 +64,7 @@
             <tr>
                 <th>Nama Siswa</th>
                 <th>Bulan</th>
+                <th>Tahun</th>
                 <th>Jumlah</th>
                 <th>Status</th>
                 <th>Aksi</th>
@@ -52,6 +77,7 @@
             <tr>
                 <td>{{ $t->siswa->nama }}</td>
                 <td>{{ $t->kasBulanan->bulan }}</td>
+                <td>{{ $t->kasBulanan->tahun }}</td>
                 <td>Rp {{ number_format($t->jumlah, 0, ',', '.') }}</td>
                 <td>
                     <span class="badge {{ $t->status_lunas == 'Lunas' ? 'bg-success' : 'bg-danger' }}">
@@ -59,6 +85,7 @@
                     </span>
                 </td>
                 <td>
+                    <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ $t->id }}">Detail</button>
                     <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ $t->id }}">Edit</button>
                     <form action="{{ route('transaksi.destroy', $t->id) }}" method="POST" class="d-inline">
                         @csrf
@@ -75,6 +102,9 @@
                         <form action="{{ route('transaksi.update', $t->id) }}" method="POST">
                             @csrf
                             @method('PUT')
+                            <!-- Hidden Input untuk menjaga nilai siswa_id dan kas_bulanan_id -->
+                            <input type="hidden" name="siswa_id" value="{{ $t->siswa_id }}">
+                            <input type="hidden" name="kas_bulanan_id" value="{{ $t->kas_bulanan_id }}">
                             <div class="modal-header">
                                 <h5 class="modal-title">Edit Transaksi</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -83,7 +113,7 @@
                                 <div class="mb-3">
                                     <label>Jumlah</label>
                                     <input type="number" name="jumlah" class="form-control" value="{{ $t->jumlah }}" required>
-                                </div>
+                                </div>  
                                 <div class="mb-3">
                                     <label>Tanggal Bayar</label>
                                     <input type="date" name="tanggal_bayar" class="form-control" value="{{ $t->tanggal_bayar }}" required>
@@ -96,45 +126,60 @@
                         </form>
                     </div>
                 </div>
-            </div>
+            </div>  
             @endforeach
         </tbody>
     </table>
 </div>
 
 <!-- Modal Tambah -->
-<div class="modal fade" id="tambahModal" tabindex="-1">
+<div class="modal fade" id="tambahModal" tabindex="-1" aria-labelledby="tambahModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <form action="{{ route('transaksi.store') }}" method="POST">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title">Tambah Transaksi</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title" id="tambahModalLabel">Tambah Transaksi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <!-- Pilih Siswa -->
                     <div class="mb-3">
-                        <label>Pilih Siswa</label>
+                        <label class="form-label">Pilih Siswa</label>
                         <select name="siswa_id" class="form-control" required>
                             @foreach($siswa as $s)
                                 <option value="{{ $s->id }}">{{ $s->nama }}</option>
                             @endforeach
                         </select>
                     </div>
+                    <!-- Pilih Bulan -->
                     <div class="mb-3">
-                        <label>Pilih Bulan</label>
-                        <select name="kas_bulanan_id" class="form-control" required>
-                            @foreach($kasBulanan as $k)
-                                <option value="{{ $k->id }}">{{ $k->bulan }}</option>
+                        <label class="form-label">Bulan:</label>
+                        <select name="bulan" class="form-control" required>
+                            <option value="">Pilih Bulan</option>
+                            @foreach($months as $key => $name)
+                                <option value="{{ $key }}">{{ ucfirst($name) }}</option>
                             @endforeach
                         </select>
                     </div>
+                    <!-- Pilih Tahun -->
                     <div class="mb-3">
-                        <label>Jumlah</label>
+                        <label class="form-label">Tahun:</label>
+                        <select name="tahun" class="form-control" required>
+                            <option value="">Pilih Tahun</option>
+                            @foreach($years as $year)
+                                <option value="{{ $year }}">{{ $year }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <!-- Jumlah Pembayaran -->
+                    <div class="mb-3">
+                        <label class="form-label">Jumlah</label>
                         <input type="number" name="jumlah" class="form-control" required>
                     </div>
+                    <!-- Tanggal Bayar -->
                     <div class="mb-3">
-                        <label>Tanggal Bayar</label>
+                        <label class="form-label">Tanggal Bayar</label>
                         <input type="date" name="tanggal_bayar" class="form-control" required>
                     </div>
                 </div>
@@ -146,42 +191,4 @@
         </div>
     </div>
 </div>
-
-<!-- jQuery (pastikan disertakan) -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-{{-- <script>
-$(document).ready(function(){
-    function filterTable() {
-        var searchText = $('#searchInput').val().toLowerCase();
-        var statusFilter = $('#statusFilter').val().toLowerCase();
-
-        $('#siswaTable tbody tr').each(function(){
-            // Asumsikan kolom pertama berisi nama siswa
-            var nama = $(this).find('td').eq(0).text().toLowerCase();
-            // Untuk kolom status, coba ambil teks dari <span> terlebih dahulu
-            var status = $(this).find('td').eq(3).find('span').text().toLowerCase();
-            if(!status){
-                // fallback jika tidak ada <span>
-                status = $(this).find('td').eq(3).text().toLowerCase();
-            }
-            
-            var showRow = true;
-            // Filter berdasarkan nama siswa
-            if(searchText && nama.indexOf(searchText) === -1){
-                showRow = false;
-            }
-            // Filter berdasarkan status
-            if(statusFilter && status.indexOf(statusFilter) === -1){
-                showRow = false;
-            }
-            $(this).toggle(showRow);
-        });
-    }
-
-    // Event handler: filter langsung saat mengetik (keyup atau input) dan saat dropdown berubah
-    $('#searchInput').on('keyup input', filterTable);
-    $('#statusFilter').on('change', filterTable);
-});
-</script> --}}
-
 @endsection

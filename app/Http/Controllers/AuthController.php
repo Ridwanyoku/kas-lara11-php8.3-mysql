@@ -27,7 +27,7 @@ class AuthController extends Controller
         if ($admin && Hash::check($request->password, $admin->password)) {
             $request->session()->put('admin_authenticated', true);
             $request->session()->put('admin_id', $admin->id);
-            return redirect()->route('admin.index');
+            return redirect()->route('transaksi.index');
         }
 
         return redirect()->back()->with('error', 'Email atau password salah.');

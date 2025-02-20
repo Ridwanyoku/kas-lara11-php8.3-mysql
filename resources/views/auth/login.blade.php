@@ -28,6 +28,7 @@
                 </div>
                 <div class="d-grid">
                     <button type="submit" class="btn btn-primary">Login</button>
+                    <button class="mb-3 btn btn-light"><a href="/">Back</a></button>
                 </div>
             </form>
         </div>

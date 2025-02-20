@@ -9,13 +9,50 @@ use App\Models\KasBulanan;
 
 class TransaksiSiswaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-    $transaksi = TransaksiSiswa::with(['siswa', 'kasBulanan'])->get();
-    $siswa = Siswa::all(); // Tambahkan ini agar $siswa tersedia di view
-    $kasBulanan = KasBulanan::all(); // Tambahkan ini agar $kasBulanan tersedia di view
+        // Ambil parameter filter dari request
+        $bulan = $request->input('bulan'); // ekspektasi: angka 1-12 atau kosong
+        $tahun = $request->input('tahun'); // ekspektasi: integer tahun atau kosong
 
-    return view('transaksi.index', compact('transaksi', 'siswa', 'kasBulanan'));
+        // Mulai query transaksi dengan relasi siswa dan kasBulanan
+        $query = TransaksiSiswa::with(['siswa', 'kasBulanan']);
+
+        // Jika kedua filter (bulan dan tahun) diberikan, filter transaksi berdasarkan periode tersebut
+        if ($bulan && $tahun) {
+            $query->whereHas('kasBulanan', function($q) use ($bulan, $tahun) {
+                $q->where('bulan', $bulan)
+                  ->where('tahun', $tahun);
+            });
+        }
+        
+        
+        $transaksi = $query->get();
+
+        // Ambil semua data siswa dan kasBulanan untuk keperluan form tambah transaksi
+        $siswa = Siswa::all();
+        $kasBulanan = KasBulanan::all();
+
+        // Buat array bulan untuk dropdown filter
+        $months = [
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember'
+        ];
+
+        // Ambil daftar tahun unik dari kas_bulanan (urutkan naik)
+        $years = KasBulanan::select('tahun')->distinct()->orderBy('tahun')->pluck('tahun');
+
+        return view('transaksi.index', compact('transaksi', 'siswa', 'kasBulanan', 'months', 'years', 'bulan', 'tahun'));
     }
 
 
@@ -27,47 +64,52 @@ class TransaksiSiswaController extends Controller
     }
 
     public function store(Request $request)
-{
+    {
     $request->validate([
-        'siswa_id'       => 'required|exists:siswa,id',
-        'kas_bulanan_id' => 'required|exists:kas_bulanan,id',
-        'jumlah'         => 'required|numeric|min:1',
-        'tanggal_bayar'  => 'required|date'
+        'siswa_id'      => 'required|exists:siswa,id',
+        'bulan'         => 'required|string',
+        'tahun'         => 'required|integer',
+        'jumlah'        => 'required|numeric|min:1',
+        'tanggal_bayar' => 'required|date'
     ]);
 
-    // Ambil data target dari tabel kas_bulanan
-    $kasBulanan = \App\Models\KasBulanan::find($request->kas_bulanan_id);
+    // Cari record kas_bulanan berdasarkan bulan dan tahun
+    $kasBulanan = KasBulanan::where('bulan', strtolower($request->bulan))
+                   ->where('tahun', $request->tahun)
+                   ->first();
+
     if (!$kasBulanan) {
-        return redirect()->back()->with('error', 'Data kas bulanan tidak ditemukan.');
+        return redirect()->back()->with('error', 'Data kas bulanan untuk periode ini tidak ditemukan.');
     }
 
     // Cek apakah sudah ada transaksi untuk siswa ini pada periode yang sama
-    $existingTransaction = \App\Models\TransaksiSiswa::where('siswa_id', $request->siswa_id)
-                        ->where('kas_bulanan_id', $request->kas_bulanan_id)
-                        ->first();
+    $existingTransaction = TransaksiSiswa::where('siswa_id', $request->siswa_id)
+                            ->where('kas_bulanan_id', $kasBulanan->id)
+                            ->first();
     if ($existingTransaction) {
         return redirect()->back()->with('error', 'Siswa sudah melakukan pembayaran untuk periode ini. Silakan update transaksi jika ingin menambah pembayaran.');
     }
 
     // Hitung total pembayaran siswa pada periode ini
-    $totalPaid = \App\Models\TransaksiSiswa::where('siswa_id', $request->siswa_id)
-                    ->where('kas_bulanan_id', $request->kas_bulanan_id)
-                    ->sum('jumlah');
+    $totalPaid = TransaksiSiswa::where('siswa_id', $request->siswa_id)
+                 ->where('kas_bulanan_id', $kasBulanan->id)
+                 ->sum('jumlah');
 
     // Validasi bahwa pembayaran yang akan dibuat tidak melebihi target
     if (($totalPaid + $request->jumlah) > $kasBulanan->target) {
         return redirect()->back()->with('error', 'Pembayaran melebihi target. Target untuk periode ini adalah Rp ' . number_format($kasBulanan->target, 0, ',', '.'));
     }
 
-    \App\Models\TransaksiSiswa::create([
+    TransaksiSiswa::create([
         'siswa_id'       => $request->siswa_id,
-        'kas_bulanan_id' => $request->kas_bulanan_id,
+        'kas_bulanan_id' => $kasBulanan->id,
         'jumlah'         => $request->jumlah,
         'tanggal_bayar'  => $request->tanggal_bayar,
     ]);
 
     return redirect()->route('transaksi.index')->with('success', 'Transaksi berhasil ditambahkan');
-}
+    }
+
 
 
     public function edit($id)
@@ -80,39 +122,14 @@ class TransaksiSiswaController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'siswa_id'       => 'required|exists:siswa,id',
-            'kas_bulanan_id' => 'required|exists:kas_bulanan,id',
-            'jumlah'         => 'required|numeric|min:1',
-            'tanggal_bayar'  => 'required|date'
-        ]);
-    
-        $transaksi = \App\Models\TransaksiSiswa::findOrFail($id);
-        $kasBulanan = \App\Models\KasBulanan::find($request->kas_bulanan_id);
-    
-        if (!$kasBulanan) {
-            return redirect()->back()->with('error', 'Data kas bulanan tidak ditemukan.');
-        }
-    
-        // Hitung total pembayaran untuk periode ini, kecuali transaksi yang sedang diedit
-        $totalPaidExcludingCurrent = \App\Models\TransaksiSiswa::where('siswa_id', $request->siswa_id)
-                                        ->where('kas_bulanan_id', $request->kas_bulanan_id)
-                                        ->where('id', '!=', $id)
-                                        ->sum('jumlah');
-    
-        // Jika total pembayaran (selain transaksi ini) sudah mencapai target, maka tidak boleh menambah pembayaran lagi
-        if ($totalPaidExcludingCurrent >= $kasBulanan->target) {
-            return redirect()->back()->with('error', 'Pembayaran untuk periode ini sudah lunas.');
-        }
-    
-        // Jika penambahan transaksi baru menyebabkan total melebihi target
-        if (($totalPaidExcludingCurrent + $request->jumlah) > $kasBulanan->target) {
-            return redirect()->back()->with('error', 'Pembayaran melebihi target. Target untuk periode ini adalah Rp ' . number_format($kasBulanan->target, 0, ',', '.'));
-        }
-    
-        $transaksi->update($request->all());
-    
-        return redirect()->route('transaksi.index')->with('success', 'Transaksi berhasil diperbarui.');
+    $transaksi = \App\Models\TransaksiSiswa::findOrFail($id);
+    $data = [
+        'jumlah' => $request->jumlah,
+        'tanggal_bayar' => $request->tanggal_bayar,
+    ];
+    $transaksi->update($data);
+
+    return redirect()->route('transaksi.index')->with('success', 'Transaksi berhasil diperbarui.');
     }
     
     
@@ -123,4 +140,6 @@ class TransaksiSiswaController extends Controller
     
         return redirect()->route('transaksi.index')->with('success', 'Transaksi berhasil dihapus');
     }
+
+    
 }
