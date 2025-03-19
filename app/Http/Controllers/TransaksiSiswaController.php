@@ -27,7 +27,7 @@ class TransaksiSiswaController extends Controller
         }
         
         
-        $transaksi = $query->get();
+        $transaksi = $query->orderBy('updated_at', 'desc')->get();
 
         // Ambil semua data siswa dan kasBulanan untuk keperluan form tambah transaksi
         $siswa = Siswa::all();

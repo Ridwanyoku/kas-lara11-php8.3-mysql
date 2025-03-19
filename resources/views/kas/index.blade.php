@@ -1,93 +1,39 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h2 class="mb-4">Kas Bulanan</h2>
+<div class="container mx-auto p-4">
+    <h2 class="text-xl font-bold mb-4">Total Kas Siswa Tahun {{ $tahun }}</h2>
 
-    <!-- Pesan Sukses -->
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+    <!-- Dropdown Pilihan Tahun -->
+    <form method="GET" action="{{ route('kas.index') }}" class="mb-4">
+        <label for="tahun" class="font-semibold">Pilih Tahun:</label>
+        <select name="tahun" id="tahun" class="border p-2 rounded" onchange="this.form.submit()">
+            @foreach($years as $y)
+                <option value="{{ $y }}" {{ $tahun == $y ? 'selected' : '' }}>{{ $y }}</option>
+            @endforeach
+        </select>
+    </form>
 
-    <!-- Tombol Tambah -->
-    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalTambah">Tambah Kas Bulanan</button>
-
-    <!-- Tabel Kas Bulanan -->
-    <table class="table table-striped">
-        <thead class="table-light">
-            <tr>
-                <th>Bulan</th>
-                <th>Tahun</th>
-                <th>Target</th>
-                <th>Aksi</th>
+    <!-- Tabel Total Kas Siswa -->
+    <table class="w-full border-collapse border">
+        <thead>
+            <tr class="bg-gray-200">
+                <th class="border p-2">Nama Siswa</th>
+                <th class="border p-2">Total Kas</th>
+                <th class="border p-2">Aksi</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($kas as $item)
-                <tr>
-                    <td>{{ $item->bulan }}</td>
-                    <td>{{ $item->tahun }}</td>
-                    <td>{{ number_format($item->target, 0, ',', '.') }}</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modalEdit{{ $item->id }}">Edit</button>
-                        <form action="{{ route('kas.destroy', $item->id) }}" method="POST" class="d-inline">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
-                        </form>
-                    </td>
-                </tr>
-
-                <!-- Modal Edit -->
-                <div class="modal fade" id="modalEdit{{ $item->id }}" tabindex="-1">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <form action="{{ route('kas.update', $item->id) }}" method="POST">
-                                @csrf
-                                @method('PUT')
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Edit Kas Bulanan</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <input type="text" name="bulan" class="form-control mb-2" value="{{ $item->bulan }}" required>
-                                    <input type="number" name="tahun" class="form-control mb-2" value="{{ $item->tahun }}" required>
-                                    <input type="number" name="target" class="form-control" value="{{ $item->target }}" required>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="submit" class="btn btn-primary">Simpan</button>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+            @foreach ($kasSiswa as $siswa)
+            <tr>
+                <td class="border p-2">{{ $siswa->nama }}</td>
+                <td class="border p-2">Rp {{ number_format($siswa->total_kas, 0, ',', '.') }}</td>
+                <td class="border p-2">
+                    <a href="{{ route('transaksi.detail', $siswa->id) }}" class="bg-blue-500 text-white px-3 py-1 rounded">Detail</a>
+                </td>
+            </tr>
             @endforeach
         </tbody>
     </table>
-
-    <!-- Modal Tambah -->
-    <div class="modal fade" id="modalTambah" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form action="{{ route('kas.store') }}" method="POST">
-                    @csrf
-                    <div class="modal-header">
-                        <h5 class="modal-title">Tambah Kas Bulanan</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <input type="text" name="bulan" class="form-control mb-2" placeholder="Bulan" required>
-                        <input type="number" name="tahun" class="form-control mb-2" placeholder="Tahun" required>
-                        <input type="number" name="target" class="form-control" placeholder="Target" required>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 </div>
 @endsection

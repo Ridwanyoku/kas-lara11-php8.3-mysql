@@ -20,9 +20,10 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav gap-5">
+                    <li class="nav-item"><a class="nav-link" href="/kas">Kas</a></li>
                     <li class="nav-item"><a class="nav-link" href="/transaksi">Transaksi</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('siswa.index') }}">Siswa</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('kas.index') }}">Target</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('kasbulanan.index') }}">Target</a></li>
                     <li class="nav-item"><a class="nav-link" href="/pengeluaran">Pengeluaran</a></li>
                     <li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li>
                     <form action="{{ route('logout') }}" method="POST" class="inline">

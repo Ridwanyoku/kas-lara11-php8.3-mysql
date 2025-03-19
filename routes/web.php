@@ -9,6 +9,7 @@ use App\Http\Controllers\TransaksiSiswaController;
 use App\Http\Controllers\PengeluaranController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\KasController;
 
 Route::get('/', function () {
     return view('index'); // Buat view landing sesuai kebutuhan
@@ -21,6 +22,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(\App\Http\Middleware\AdminAuth::class)->group(function () {
     // Misalnya, halaman dashboard admin
+
+    Route::get('/kas', [KasController::class, 'index'])->name('kas.index');
+
 
     // CRUD untuk pengelolaan admin (bisa diatur di AdminController)
     Route::resource('admin', AdminController::class);
@@ -35,10 +39,10 @@ Route::middleware(\App\Http\Middleware\AdminAuth::class)->group(function () {
     // Route::delete('/siswa/{id}', [SiswaController::class, 'destroy'])->name('siswa.destroy');
 
     // Route CRUD Kas Bulanan
-    Route::get('/kas', [KasBulananController::class, 'index'])->name('kas.index');
-    Route::post('/kas', [KasBulananController::class, 'store'])->name('kas.store');
-    Route::put('/kas/{id}', [KasBulananController::class, 'update'])->name('kas.update');
-    Route::delete('/kas/{id}', [KasBulananController::class, 'destroy'])->name('kas.destroy');
+    Route::get('/kasbulanan', [KasBulananController::class, 'index'])->name('kasbulanan.index');
+    Route::post('/kasbulanan', [KasBulananController::class, 'store'])->name('kasbulanan.store');
+    Route::put('/kasbulanan/{id}', [KasBulananController::class, 'update'])->name('kasbulanan.update');
+    Route::delete('/kasbulanan/{id}', [KasBulananController::class, 'destroy'])->name('kasbulanan.destroy');
 
     // Route Transaksi
     Route::get('/transaksi', [TransaksiSiswaController::class, 'index'])->name('transaksi.index');

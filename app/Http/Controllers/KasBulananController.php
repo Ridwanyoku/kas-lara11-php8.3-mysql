@@ -10,7 +10,7 @@ class KasBulananController extends Controller
     public function index()
     {
         $kas = KasBulanan::orderBy('tahun', 'desc')->orderBy('id', 'asc')->get();
-        return view('kas.index', compact('kas'));
+        return view('kasbulanan.index', compact('kas'));
     }
 
     public function store(Request $request)
@@ -23,7 +23,7 @@ class KasBulananController extends Controller
 
         KasBulanan::create($request->all());
 
-        return redirect()->route('kas.index')->with('success', 'Kas bulanan berhasil ditambahkan.');
+        return redirect()->route('kasbulanan.index')->with('success', 'Kas bulanan berhasil ditambahkan.');
     }
 
     public function update(Request $request, $id)
@@ -37,7 +37,7 @@ class KasBulananController extends Controller
         $kas = KasBulanan::findOrFail($id);
         $kas->update($request->all());
 
-        return redirect()->route('kas.index')->with('success', 'Kas bulanan berhasil diperbarui.');
+        return redirect()->route('kasbulanan.index')->with('success', 'Kas bulanan berhasil diperbarui.');
     }
 
     public function destroy($id)
@@ -45,6 +45,6 @@ class KasBulananController extends Controller
         $kas = KasBulanan::findOrFail($id);
         $kas->delete();
 
-        return redirect()->route('kas.index')->with('success', 'Kas bulanan berhasil dihapus.');
+        return redirect()->route('kasbulanan.index')->with('success', 'Kas bulanan berhasil dihapus.');
     }
 }
