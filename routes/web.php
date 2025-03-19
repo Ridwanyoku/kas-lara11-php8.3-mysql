@@ -47,6 +47,8 @@ Route::middleware(\App\Http\Middleware\AdminAuth::class)->group(function () {
     Route::get('/transaksi/{id}/edit', [TransaksiSiswaController::class, 'edit'])->name('transaksi.edit');
     Route::put('/transaksi/{id}', [TransaksiSiswaController::class, 'update'])->name('transaksi.update');
     Route::delete('/transaksi/{id}', [TransaksiSiswaController::class, 'destroy'])->name('transaksi.destroy');
+    Route::get('/transaksi/detail/{siswa_id}', [TransaksiSiswaController::class, 'detail'])->name('transaksi.detail');
+
 
     // Route pengeluaran
     Route::get('/pengeluaran', [PengeluaranController::class, 'index'])->name('pengeluaran.index');

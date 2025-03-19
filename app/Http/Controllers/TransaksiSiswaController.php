@@ -16,7 +16,7 @@ class TransaksiSiswaController extends Controller
         $tahun = $request->input('tahun'); // ekspektasi: integer tahun atau kosong
 
         // Mulai query transaksi dengan relasi siswa dan kasBulanan
-        $query = TransaksiSiswa::with(['siswa', 'kasBulanan']);
+        $query = TransaksiSiswa::with(['siswa', 'kasBulanan']); 
 
         // Jika kedua filter (bulan dan tahun) diberikan, filter transaksi berdasarkan periode tersebut
         if ($bulan && $tahun) {
@@ -65,50 +65,59 @@ class TransaksiSiswaController extends Controller
 
     public function store(Request $request)
     {
-    $request->validate([
-        'siswa_id'      => 'required|exists:siswa,id',
-        'bulan'         => 'required|string',
-        'tahun'         => 'required|integer',
-        'jumlah'        => 'required|numeric|min:1',
-        'tanggal_bayar' => 'required|date'
-    ]);
+        $request->validate([
+            'siswa_id'      => 'required|exists:siswa,id',
+            'bulan'         => 'required|string',
+            'tahun'         => 'required|integer',
+            'jumlah'        => 'required|numeric|min:1',
+        ]);
 
-    // Cari record kas_bulanan berdasarkan bulan dan tahun
-    $kasBulanan = KasBulanan::where('bulan', strtolower($request->bulan))
-                   ->where('tahun', $request->tahun)
-                   ->first();
+        // Cari record kas_bulanan berdasarkan bulan dan tahun (pastikan bulan disimpan lowercase)
+        $kasBulanan = KasBulanan::where('bulan', strtolower($request->bulan))
+                        ->where('tahun', $request->tahun)
+                        ->first();
 
-    if (!$kasBulanan) {
-        return redirect()->back()->with('error', 'Data kas bulanan untuk periode ini tidak ditemukan.');
+        if (!$kasBulanan) {
+            return redirect()->back()->with('error', 'Data kas bulanan untuk periode ini tidak ditemukan.');
+        }
+
+        // Cek apakah sudah ada transaksi untuk siswa ini pada periode yang sama
+        $existingTransaction = TransaksiSiswa::where('siswa_id', $request->siswa_id)
+                                ->where('kas_bulanan_id', $kasBulanan->id)
+                                ->first();
+
+        if ($existingTransaction) {
+            // Jika sudah ada, tambahkan jumlah pembayaran baru ke transaksi yang sudah ada
+            $newTotal = $existingTransaction->jumlah + $request->jumlah;
+
+            // Validasi: jika total melebihi target, tampilkan error
+            if ($newTotal > $kasBulanan->target) {
+                return redirect()->back()->with('error', 'Pembayaran melebihi target. Target untuk periode ini adalah Rp ' . number_format($kasBulanan->target, 0, ',', '.'));
+            }
+
+            // Update transaksi dengan jumlah baru dan update tanggal bayar (opsional, bisa diupdate ke tanggal pembayaran terbaru)
+            $existingTransaction->update([
+                'jumlah' => $newTotal,
+                'tanggal_bayar' => $request->tanggal_bayar,
+            ]);
+
+            return redirect()->route('transaksi.index')->with('success', 'Transaksi berhasil diperbarui (ditambahkan cicilan).');
+        }
+
+        // Jika belum ada transaksi, buat transaksi baru
+        if ($request->jumlah > $kasBulanan->target) {
+            return redirect()->back()->with('error', 'Pembayaran melebihi target. Target untuk periode ini adalah Rp ' . number_format($kasBulanan->target, 0, ',', '.'));
+        }
+
+        TransaksiSiswa::create([
+            'siswa_id'       => $request->siswa_id,
+            'kas_bulanan_id' => $kasBulanan->id,
+            'jumlah'         => $request->jumlah,
+        ]);
+
+        return redirect()->route('transaksi.index')->with('success', 'Transaksi berhasil ditambahkan');
     }
 
-    // Cek apakah sudah ada transaksi untuk siswa ini pada periode yang sama
-    $existingTransaction = TransaksiSiswa::where('siswa_id', $request->siswa_id)
-                            ->where('kas_bulanan_id', $kasBulanan->id)
-                            ->first();
-    if ($existingTransaction) {
-        return redirect()->back()->with('error', 'Siswa sudah melakukan pembayaran untuk periode ini. Silakan update transaksi jika ingin menambah pembayaran.');
-    }
-
-    // Hitung total pembayaran siswa pada periode ini
-    $totalPaid = TransaksiSiswa::where('siswa_id', $request->siswa_id)
-                 ->where('kas_bulanan_id', $kasBulanan->id)
-                 ->sum('jumlah');
-
-    // Validasi bahwa pembayaran yang akan dibuat tidak melebihi target
-    if (($totalPaid + $request->jumlah) > $kasBulanan->target) {
-        return redirect()->back()->with('error', 'Pembayaran melebihi target. Target untuk periode ini adalah Rp ' . number_format($kasBulanan->target, 0, ',', '.'));
-    }
-
-    TransaksiSiswa::create([
-        'siswa_id'       => $request->siswa_id,
-        'kas_bulanan_id' => $kasBulanan->id,
-        'jumlah'         => $request->jumlah,
-        'tanggal_bayar'  => $request->tanggal_bayar,
-    ]);
-
-    return redirect()->route('transaksi.index')->with('success', 'Transaksi berhasil ditambahkan');
-    }
 
 
 
@@ -125,7 +134,6 @@ class TransaksiSiswaController extends Controller
     $transaksi = \App\Models\TransaksiSiswa::findOrFail($id);
     $data = [
         'jumlah' => $request->jumlah,
-        'tanggal_bayar' => $request->tanggal_bayar,
     ];
     $transaksi->update($data);
 
@@ -142,4 +150,26 @@ class TransaksiSiswaController extends Controller
     }
 
     
+    public function detail($siswa_id)
+    {
+    // Ambil data siswa
+    $siswa = Siswa::findOrFail($siswa_id);
+
+    // Ambil semua transaksi untuk siswa tersebut, beserta relasi kasBulanan
+    $transactions = TransaksiSiswa::with('kasBulanan')
+                        ->where('siswa_id', $siswa_id)
+                        ->get();
+
+    // Urutkan transaksi berdasarkan tahun dan bulan (terbaru ke terlama)
+    // Karena kolom bulan disimpan sebagai string (misal "januari"),
+    // kita bisa mengurutkan dengan menggunakan kasBulanan->tahun desc 
+    // dan jika ada kolom bulan_nomor, gunakan itu. Jika tidak, kita asumsikan urutan berdasarkan id kasBulanan.
+    $transactions = $transactions->sortByDesc(function($t) {
+        // Gunakan kombinasi tahun dan id sebagai proxy urutan
+        return $t->kasBulanan->tahun . '-' . $t->kasBulanan->id;
+    });
+
+    return view('transaksi.detail', compact('siswa', 'transactions'));  
+    }
+
 }

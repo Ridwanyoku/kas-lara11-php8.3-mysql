@@ -18,7 +18,7 @@
     @endif
 
     <table class="table table-striped mt-3">
-        <thead table-light>
+        <thead class="table-light">
             <tr>
                 <th>Nama</th>
                 <th>Kelas</th>

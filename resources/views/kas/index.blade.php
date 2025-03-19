@@ -14,7 +14,7 @@
 
     <!-- Tabel Kas Bulanan -->
     <table class="table table-striped">
-        <thead>
+        <thead class="table-light">
             <tr>
                 <th>Bulan</th>
                 <th>Tahun</th>

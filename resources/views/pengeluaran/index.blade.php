@@ -21,7 +21,7 @@
 
     <!-- Tabel Pengeluaran -->
     <table class="table table-striped">
-        <thead>
+        <thead class="table-light">
             <tr>
                 <th>Deskripsi</th>
                 <th>Jumlah</th>

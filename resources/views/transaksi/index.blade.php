@@ -60,20 +60,19 @@
 
     <!-- Tabel Transaksi -->
     <table class="table table-striped mb-4">
-        <thead class="">
+        <thead class="table-light">
             <tr>
                 <th>Nama Siswa</th>
                 <th>Bulan</th>
                 <th>Tahun</th>
                 <th>Jumlah</th>
                 <th>Status</th>
+                <th>Waktu pembayaran</th>
                 <th>Aksi</th>
             </tr>
         </thead>
         <tbody>
-            {{-- @php $totalKas = 0; @endphp --}}
             @foreach($transaksi as $t)
-            {{-- @php $totalKas += $t->jumlah; @endphp --}}
             <tr>
                 <td>{{ $t->siswa->nama }}</td>
                 <td>{{ $t->kasBulanan->bulan }}</td>
@@ -84,8 +83,9 @@
                         {{ $t->status_lunas }}
                     </span>
                 </td>
+                <td>{{ $t->updated_at->format('d-m-Y H:i') }}</td>
                 <td>
-                    <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ $t->id }}">Detail</button>
+                    <a href="{{ route('transaksi.detail', $t->siswa->id) }}" class="btn btn-info btn-sm">Detail</a>
                     <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ $t->id }}">Edit</button>
                     <form action="{{ route('transaksi.destroy', $t->id) }}" method="POST" class="d-inline">
                         @csrf
@@ -114,10 +114,10 @@
                                     <label>Jumlah</label>
                                     <input type="number" name="jumlah" class="form-control" value="{{ $t->jumlah }}" required>
                                 </div>  
-                                <div class="mb-3">
+                                {{-- <div class="mb-3">
                                     <label>Tanggal Bayar</label>
                                     <input type="date" name="tanggal_bayar" class="form-control" value="{{ $t->tanggal_bayar }}" required>
-                                </div>
+                                </div> --}}
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -176,11 +176,6 @@
                     <div class="mb-3">
                         <label class="form-label">Jumlah</label>
                         <input type="number" name="jumlah" class="form-control" required>
-                    </div>
-                    <!-- Tanggal Bayar -->
-                    <div class="mb-3">
-                        <label class="form-label">Tanggal Bayar</label>
-                        <input type="date" name="tanggal_bayar" class="form-control" required>
                     </div>
                 </div>
                 <div class="modal-footer">
