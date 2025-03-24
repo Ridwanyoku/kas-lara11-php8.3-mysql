@@ -15,8 +15,8 @@
     </form>
 
     <!-- Tabel Total Kas Siswa -->
-    <table class="w-full border-collapse border">
-        <thead>
+    <table class="table table-striped mb-4">
+        <thead class="table-light">
             <tr class="bg-gray-200">
                 <th class="border p-2">Nama Siswa</th>
                 <th class="border p-2">Total Kas</th>
@@ -29,7 +29,7 @@
                 <td class="border p-2">{{ $siswa->nama }}</td>
                 <td class="border p-2">Rp {{ number_format($siswa->total_kas, 0, ',', '.') }}</td>
                 <td class="border p-2">
-                    <a href="{{ route('transaksi.detail', $siswa->id) }}" class="bg-blue-500 text-white px-3 py-1 rounded">Detail</a>
+                    <a href="{{ route('transaksi.detail', $siswa->id) }}" class="btn btn-info btn-sm">Detail</a>
                 </td>
             </tr>
             @endforeach
