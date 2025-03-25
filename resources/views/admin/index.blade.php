@@ -29,16 +29,17 @@
                             Edit
                         </button>
 
-                        {{-- <form action="{{ route('admin.destroy', $admin->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus admin ini?');">
+                        <form action="{{ route('admin.destroy', $admin->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus admin ini?');">
                             @csrf
                             @method('DELETE')
                             <button class="btn btn-danger btn-sm">Hapus</button>
-                        </form> --}}
+                        </form> 
                     </td>
                 </tr>
 
                 <!-- Modal Edit -->
-                <div class="modal fade" id="modalEdit{{ $admin->id }}" tabindex="-1">
+                <div class="modal fade @if(session('edit_id') == $admin->id) show @endif" 
+                    id="modalEdit{{ $admin->id }}" tabindex="-1" @if(session('edit_id') == $admin->id) style="display:block;" @endif>
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <form action="{{ route('admin.update', $admin->id) }}" method="POST">
@@ -49,13 +50,22 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
                                 <div class="modal-body">
+                                    @if ($errors->any() && session('edit_id') == $admin->id)
+                                        <div class="alert alert-danger">
+                                            <ul>
+                                                @foreach ($errors->all() as $error)
+                                                    <li>{{ $error }}</li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    @endif
                                     <div class="mb-3">
                                         <label>Nama Admin</label>
-                                        <input type="text" name="nama" class="form-control" value="{{ $admin->nama }}" required>
+                                        <input type="text" name="nama" class="form-control" value="{{ old('nama', $admin->nama) }}" required>
                                     </div>
                                     <div class="mb-3">
                                         <label>Email</label>
-                                        <input type="email" name="email" class="form-control" value="{{ $admin->email }}" required>
+                                        <input type="email" name="email" class="form-control" value="{{ old('email', $admin->email) }}" required>
                                     </div>
                                     <div class="mb-3">
                                         <label>Password (kosongkan jika tidak diubah)</label>
@@ -80,7 +90,8 @@
 </div>
 
 <!-- Modal Tambah -->
-<div class="modal fade" id="modalTambah" tabindex="-1">
+<div class="modal fade @if($errors->any() && !session('edit_id')) show @endif" 
+    id="modalTambah" tabindex="-1" @if($errors->any() && !session('edit_id')) style="display:block;" @endif>
     <div class="modal-dialog">
         <div class="modal-content">
             <form action="{{ route('admin.store') }}" method="POST">
@@ -90,13 +101,22 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
+                    @if ($errors->any() && !session('edit_id'))
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                     <div class="mb-3">
                         <label>Nama Admin</label>
-                        <input type="text" name="nama" class="form-control" required>
+                        <input type="text" name="nama" class="form-control" value="{{ old('nama') }}" required>
                     </div>
                     <div class="mb-3">
                         <label>Email</label>
-                        <input type="email" name="email" class="form-control" required>
+                        <input type="email" name="email" class="form-control" value="{{ old('email') }}" required>
                     </div>
                     <div class="mb-3">
                         <label>Password</label>

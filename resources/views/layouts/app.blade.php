@@ -20,6 +20,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav gap-5">
+                    {{-- tes apakah navigasinya tetap bekerja jika berbeda bentuk --}}
                     <li class="nav-item"><a class="nav-link" href="/kas">Kas</a></li>
                     <li class="nav-item"><a class="nav-link" href="/transaksi">Transaksi</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('siswa.index') }}">Siswa</a></li>

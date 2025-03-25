@@ -18,17 +18,17 @@
     <table class="table table-striped mb-4">
         <thead class="table-light">
             <tr class="bg-gray-200">
-                <th class="border p-2">Nama Siswa</th>
-                <th class="border p-2">Total Kas</th>
-                <th class="border p-2">Aksi</th>
+                <th>Nama Siswa</th>
+                <th>Total Kas</th>
+                <th>Aksi</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($kasSiswa as $siswa)
             <tr>
-                <td class="border p-2">{{ $siswa->nama }}</td>
-                <td class="border p-2">Rp {{ number_format($siswa->total_kas, 0, ',', '.') }}</td>
-                <td class="border p-2">
+                <td>{{ $siswa->nama }}</td>
+                <td>Rp {{ number_format($siswa->total_kas, 0, ',', '.') }}</td>
+                <td>
                     <a href="{{ route('transaksi.detail', $siswa->id) }}" class="btn btn-info btn-sm">Detail</a>
                 </td>
             </tr>

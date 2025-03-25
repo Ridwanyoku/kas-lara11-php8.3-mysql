@@ -66,7 +66,7 @@
                 <th>Bulan</th>
                 <th>Tahun</th>
                 <th>Jumlah</th>
-                <th>Status</th>
+                {{-- <th>Status</th> --}}
                 <th>Waktu pembayaran</th>
                 <th>Aksi</th>
             </tr>
@@ -78,11 +78,11 @@
                 <td>{{ $t->kasBulanan->bulan }}</td>
                 <td>{{ $t->kasBulanan->tahun }}</td>
                 <td>Rp {{ number_format($t->jumlah, 0, ',', '.') }}</td>
-                <td>
+                {{-- <td>
                     <span class="badge {{ $t->status_lunas == 'Lunas' ? 'bg-success' : 'bg-danger' }}">
                         {{ $t->status_lunas }}
                     </span>
-                </td>
+                </td> --}}
                 <td>{{ $t->updated_at->format('d-m-Y H:i') }}</td>
                 <td>
                     <a href="{{ route('transaksi.detail', $t->siswa->id) }}" class="btn btn-info btn-sm">Detail</a>
