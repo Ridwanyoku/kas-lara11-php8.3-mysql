@@ -20,43 +20,42 @@
     <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#tambahModal">Tambah Transaksi</button>
 
     <!-- Form Filter Bulan dan Tahun -->
-    <form method="GET" action="{{ route('transaksi.index') }}" class="row g-3 mb-4">
-        <div class="col-md-4">
-            <select name="bulan" class="form-select">
-                <option value="">Semua Bulan</option>
-                @php
-                    $months = [
-                        'januari' => 'Januari',
-                        'februari' => 'Februari',
-                        'maret' => 'Maret',
-                        'april' => 'April',
-                        'mei' => 'Mei',
-                        'juni' => 'Juni',
-                        'juli' => 'Juli',
-                        'agustus' => 'Agustus',
-                        'september' => 'September',
-                        'oktober' => 'Oktober',
-                        'november' => 'November',
-                        'desember' => 'Desember',
-                    ];
-                @endphp
-                @foreach($months as $key => $value)
-                    <option value="{{ $key }}" {{ (request('bulan') == $key) ? 'selected' : '' }}>{{ $value }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div class="col-md-4">
-            <select name="tahun" class="form-select">
-                <option value="">Semua Tahun</option>
-                @foreach($years as $year)
-                    <option value="{{ $year }}" {{ $tahun == $year ? 'selected' : '' }}>{{ $year }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div class="col-md-4">
-            <button type="submit" class="btn btn-primary w-100">Tampilkan</button>
-        </div>
-    </form>
+    <!-- Form Filter Bulan dan Tahun -->
+<form method="GET" action="{{ route('transaksi.index') }}" class="row g-3 mb-4" id="filterForm">
+    <div class="col-md-4">
+        <select name="bulan" class="form-select" onchange="document.getElementById('filterForm').submit();">
+            <option value="">Semua Bulan</option>
+            @php
+                $months = [
+                    'januari' => 'Januari',
+                    'februari' => 'Februari',
+                    'maret' => 'Maret',
+                    'april' => 'April',
+                    'mei' => 'Mei',
+                    'juni' => 'Juni',
+                    'juli' => 'Juli',
+                    'agustus' => 'Agustus',
+                    'september' => 'September',
+                    'oktober' => 'Oktober',
+                    'november' => 'November',
+                    'desember' => 'Desember',
+                ];
+            @endphp
+            @foreach($months as $key => $value)
+                <option value="{{ $key }}" {{ request('bulan') == $key ? 'selected' : '' }}>{{ $value }}</option>
+            @endforeach
+        </select>
+    </div>
+    <div class="col-md-4">
+        <select name="tahun" class="form-select" onchange="document.getElementById('filterForm').submit();">
+            <option value="">Semua Tahun</option>
+            @foreach($years as $year)
+                <option value="{{ $year }}" {{ request('tahun') == $year ? 'selected' : '' }}>{{ $year }}</option>
+            @endforeach
+        </select>
+    </div>
+</form>
+
 
     <!-- Tabel Transaksi -->
     <table class="table table-striped mb-4">
@@ -87,11 +86,11 @@
                 <td>
                     <a href="{{ route('transaksi.detail', $t->siswa->id) }}" class="btn btn-info btn-sm">Detail</a>
                     <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ $t->id }}">Edit</button>
-                    <form action="{{ route('transaksi.destroy', $t->id) }}" method="POST" class="d-inline">
+                    {{-- <form action="{{ route('transaksi.destroy', $t->id) }}" method="POST" class="d-inline">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Hapus transaksi ini?')">Hapus</button>
-                    </form>
+                    </form> --}}
                 </td>
             </tr>
 

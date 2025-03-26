@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Admin;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -27,7 +28,8 @@ class AuthController extends Controller
         if ($admin && Hash::check($request->password, $admin->password)) {
             $request->session()->put('admin_authenticated', true);
             $request->session()->put('admin_id', $admin->id);
-            return redirect()->route('transaksi.index');
+            $request->session()->put('admin_name', $admin->nama);
+            return redirect()->route('dashboard.index');
         }
 
         return redirect()->back()->with('error', 'Email atau password salah.');

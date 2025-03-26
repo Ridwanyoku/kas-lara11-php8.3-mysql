@@ -7,11 +7,20 @@ use App\Models\KasBulanan;
 
 class KasBulananController extends Controller
 {
-    public function index()
-    {
-        $kas = KasBulanan::orderBy('tahun', 'desc')->orderBy('id', 'asc')->get();
-        return view('kasbulanan.index', compact('kas'));
-    }
+public function index(Request $request)
+{
+    // Ambil daftar tahun yang tersedia di database
+    $years = KasBulanan::select('tahun')->distinct()->pluck('tahun');
+
+    // Ambil tahun yang dipilih, default ke tahun terbaru jika tidak dipilih
+    $tahun = $request->query('tahun', $years->max()); 
+
+    // Ambil target bulanan berdasarkan tahun yang dipilih
+    $target = KasBulanan::where('tahun', $tahun)->orderBy('bulan')->get();
+
+    return view('kasbulanan.index', compact('years', 'tahun', 'target'));
+}
+
 
     public function store(Request $request)
     {
@@ -23,7 +32,7 @@ class KasBulananController extends Controller
 
         KasBulanan::create($request->all());
 
-        return redirect()->route('kasbulanan.index')->with('success', 'Kas bulanan berhasil ditambahkan.');
+        return redirect()->route('kasbulanan.index')->with('success', 'target Kas bulanan berhasil ditambahkan.');
     }
 
     public function update(Request $request, $id)
@@ -37,7 +46,7 @@ class KasBulananController extends Controller
         $kas = KasBulanan::findOrFail($id);
         $kas->update($request->all());
 
-        return redirect()->route('kasbulanan.index')->with('success', 'Kas bulanan berhasil diperbarui.');
+        return redirect()->route('kasbulanan.index')->with('success', 'target Kas bulanan berhasil diperbarui.');
     }
 
     public function destroy($id)
@@ -45,6 +54,6 @@ class KasBulananController extends Controller
         $kas = KasBulanan::findOrFail($id);
         $kas->delete();
 
-        return redirect()->route('kasbulanan.index')->with('success', 'Kas bulanan berhasil dihapus.');
+        return redirect()->route('kasbulanan.index')->with('success', 'target Kas bulanan berhasil dihapus.');
     }
 }

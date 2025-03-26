@@ -1,7 +1,5 @@
 <?php
 
-use App\Models\TransaksiSiswa;
-use App\Models\Pengeluaran;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\KasBulananController;
@@ -10,6 +8,9 @@ use App\Http\Controllers\PengeluaranController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\KasController;
+use App\Http\Controllers\DashboardController;
+
+
 
 Route::get('/', function () {
     return view('index'); // Buat view landing sesuai kebutuhan
@@ -22,7 +23,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(\App\Http\Middleware\AdminAuth::class)->group(function () {
     // Misalnya, halaman dashboard admin
-
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+    
     Route::get('/kas', [KasController::class, 'index'])->name('kas.index');
 
 

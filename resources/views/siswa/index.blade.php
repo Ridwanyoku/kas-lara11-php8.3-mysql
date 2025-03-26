@@ -37,11 +37,11 @@
                             Edit
                         </button>
 
-                        <form action="{{ route('siswa.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus siswa ini?');">
+                        {{-- <form action="{{ route('siswa.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus siswa ini?');">
                             @csrf
                             @method('DELETE')
                             <button class="btn btn-danger btn-sm">Hapus</button>
-                        </form>
+                        </form> --}}
                     </td>
                 </tr>
 

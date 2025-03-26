@@ -13,24 +13,36 @@ class TransaksiSiswaController extends Controller
     {
         $bulan = $request->input('bulan');
         $tahun = $request->input('tahun');
-
+    
         $query = TransaksiSiswa::with(['siswa', 'kasBulanan']);
-
-        if ($bulan && $tahun) {
-            $query->whereHas('kasBulanan', function($q) use ($bulan, $tahun) {
-                $q->where('bulan', $bulan)
-                  ->where('tahun', $tahun);
+    
+        // Filter berdasarkan bulan (jika diisi)
+        if ($bulan) {
+            $query->whereHas('kasBulanan', function($q) use ($bulan) {
+                $q->where('bulan', $bulan);
             });
         }
-        
+    
+        // Filter berdasarkan tahun (jika diisi)
+        if ($tahun) {
+            $query->whereHas('kasBulanan', function($q) use ($tahun) {
+                $q->where('tahun', $tahun);
+            });
+        }
+    
         $transaksi = $query->orderBy('updated_at', 'desc')->get();
         $siswa = Siswa::all();
         $kasBulanan = KasBulanan::all();
-        $months = [1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'];
+        $months = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 
+            6 => 'Juni', 7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 
+            11 => 'November', 12 => 'Desember'
+        ];
         $years = KasBulanan::select('tahun')->distinct()->orderBy('tahun')->pluck('tahun');
-
+    
         return view('transaksi.index', compact('transaksi', 'siswa', 'kasBulanan', 'months', 'years', 'bulan', 'tahun'));
     }
+    
 
     public function store(Request $request)
     {

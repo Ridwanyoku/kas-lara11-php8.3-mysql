@@ -37,11 +37,11 @@
                 <td>{{ $p->tanggal_pengeluaran }}</td>
                 <td>
                     <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ $p->id }}">Edit</button>
-                    <form action="{{ route('pengeluaran.destroy', $p->id) }}" method="POST" class="d-inline">
+                    {{-- <form action="{{ route('pengeluaran.destroy', $p->id) }}" method="POST" class="d-inline">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Hapus pengeluaran ini?')">Hapus</button>
-                    </form>
+                    </form> --}}
                 </td>
             </tr>
 

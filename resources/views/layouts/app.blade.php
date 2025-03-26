@@ -14,7 +14,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
         <div class="container gap-5">
-            <a class="navbar-brand" href="#">Dashboard</a>
+            <a class="navbar-brand" href="/dashboard">Dashboard</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -27,6 +27,10 @@
                     <li class="nav-item"><a class="nav-link" href="{{ route('kasbulanan.index') }}">Target</a></li>
                     <li class="nav-item"><a class="nav-link" href="/pengeluaran">Pengeluaran</a></li>
                     <li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li>
+                    <li class="nav-item d-flex align-items-center text-white me-3">
+                        <i class="fas fa-user-circle me-2"></i> 
+                        {{ session('admin_name') ?? 'Guest' }}
+                    </li>
                     <form action="{{ route('logout') }}" method="POST" class="inline">
                         @csrf
                         <button type="submit" class="nav-item button btn btn-danger">
@@ -48,34 +52,6 @@
         </div>
     </div>
     
-    
-    {{-- <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="grid grid-cols-1 gap-6 md:grid-cols-4 mb-8">
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <i class="fas fa-wallet text-2xl text-custom"></i>
-                    </div>
-                    <div class="ml-4">
-                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Kas Terkumpul</h3>
-                        <p class="text-2xl font-semibold text-gray-900 dark:text-white">Rp 2.500.000</p>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <i class="fas fa-money-bill-wave text-2xl text-orange-500"></i>
-                    </div>
-                    <div class="ml-4">
-                        <h3 class="text-sm font-medium text-gray-500">Total Pengeluaran</h3>
-                        <p class="text-2xl font-semibold text-gray-900 dark:text-white">Rp 500.000</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> --}}
-    
     <!-- Konten Utama -->
     <main role="main" class="container">
         
@@ -85,21 +61,6 @@
         </div>
     </main>
     
-    <!-- Bootstrap JS -->
-    {{-- <footer class="bottom bg-dark text-white text-center p-3">
-        <strong>Total Kas: Rp <span id="totalKas">0</span></strong>
-    </footer>
-     --}}
-    {{-- <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            fetch("{{ route('kas.total') }}")
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("totalKas").innerText = new Intl.NumberFormat('id-ID').format(data.total);
-                })
-                .catch(error => console.error('Error:', error));
-        });
-    </script> --}}
     
 
 </body>

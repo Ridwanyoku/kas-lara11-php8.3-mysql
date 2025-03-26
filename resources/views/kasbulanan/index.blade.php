@@ -9,6 +9,16 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
+    <!-- Dropdown Pilih Tahun -->
+    <form method="GET" action="{{ route('kasbulanan.index') }}" class="mb-4">
+        <label for="tahun" class="font-semibold">Pilih Tahun:</label>
+        <select name="tahun" id="tahun" class="form-select w-auto d-inline-block" onchange="this.form.submit()">
+            @foreach($years as $y)
+                <option value="{{ $y }}" {{ $tahun == $y ? 'selected' : '' }}>{{ $y }}</option>
+            @endforeach
+        </select>
+    </form>
+
     <!-- Tombol Tambah -->
     <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalTambah">Tambah Kas Bulanan</button>
 
@@ -23,18 +33,13 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($kas as $item)
+            @foreach ($target as $item)
                 <tr>
-                    <td>{{ $item->bulan }}</td>
+                    <td>{{ ucfirst($item->bulan) }}</td>
                     <td>{{ $item->tahun }}</td>
-                    <td>{{ number_format($item->target, 0, ',', '.') }}</td>
+                    <td>Rp {{ number_format($item->target, 0, ',', '.') }}</td>
                     <td>
                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modalEdit{{ $item->id }}">Edit</button>
-                        <form action="{{ route('kasbulanan.destroy', $item->id) }}" method="POST" class="d-inline">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
-                        </form>
                     </td>
                 </tr>
 
