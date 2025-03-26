@@ -3,7 +3,7 @@
 @section('content')
 <div class="container mx-auto p-6">
     <a href="{{ route('kas.index') }}">
-        <button type="button" class="btn-info">
+        <button type="button" class="btn btn-info">
             Kembali ke Kas
         </button>
     </a>
